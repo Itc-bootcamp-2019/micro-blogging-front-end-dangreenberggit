@@ -1,26 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import KvetchBox from './components/kvetchbox';
+import KvetchContext from "./contexts/kvetch-context";
+import KvetchDisplay from './components/kvetchdisplay';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      kvetches: [],
+      addKvetch: this.handleOnSubmit.bind(this)
+    };
+  }
+
+  handleOnSubmit(kvetch) {
+    const { kvetches } = this.state;
+    this.setState({ kvetches: [kvetch, ...kvetches] });
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <KvetchContext.Provider value={this.state}>
+            <KvetchBox
+            />
+            <KvetchDisplay
+            />
+          </KvetchContext.Provider>
+        </header>
+      </div>
+    );
+  }
 }
 
 export default App;
