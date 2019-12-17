@@ -3,34 +3,56 @@ import KvetchContext from "../contexts/kvetch-context";
 import './kvetch-style.css';
 
 class Kvetchbox extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-        kvetch: ''
-    };
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            user: '',
+            kvetch: '',
+            error: false,
+        };
+    }
 
-  handleKvetch(event) {
-    this.setState({ kvetch: event.target.value });
-  }
 
-  render() {
-    const { kvetch } = this.state;
-    return (
-      <KvetchContext.Consumer>
-        {( {addKvetch, kvetches} ) => (
-            <div className="kvetch-container">
-                <textarea className="kvetch-entry"
-                type="text"
-                onChange={event => this.handleKvetch(event)}
-                value={this.state.kvetch}
-                />
-                <button className="submit-button" onClick={() => {addKvetch(kvetch); this.setState( { kvetch: ''})}}>Kvetch!</button>
-            </div>
-        )}
-      </KvetchContext.Consumer>
-    );
-  }
+    handleKvetch(event) {
+        const kvetch = event.target.value;
+        this.setState({ kvetch: kvetch });
+        if ((kvetch.length > 140) || (kvetch.length < 0)) {
+            this.setState({ error: true });
+        } else {
+            this.setState({ error: false });
+        }
+    }
+
+    render() {
+        const { user, kvetch, error } = this.state;
+        return (
+            <KvetchContext.Consumer>
+                {( {addKvetch, kvetches} ) => (
+                    <div className="kvetch kvetch-container">
+                        <textarea className="kvetch kvetch-entry"
+                            type="text"
+                            maxLength="350"
+                            placeholder="What, I need to beg you to kvetch about something?"
+                            onChange={event => this.handleKvetch(event)}
+                            value={kvetch}
+                        />
+                        {error &&
+                            <div className="kvetch error">
+                                Oy! You can't Kvetch for more than 140 chars!
+                            </div>
+                        }
+                        <button
+                            className="kvetch submit-button"
+                            disabled={this.state.error}
+                            onClick={() => {addKvetch(kvetch); this.setState( { kvetch: ''})}}
+                        >
+                            Kvetch!
+                        </button>
+                    </div>
+                )}
+            </KvetchContext.Consumer>
+        );
+    }
 }
 
 export default Kvetchbox;
