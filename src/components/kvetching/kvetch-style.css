@@ -38,6 +38,10 @@
     color: rgb(223, 223, 255);
 }
 
+.post-error:focus {
+    box-shadow: red;
+}
+
 .submit-button {
     position: relative;
     bottom: 50px;

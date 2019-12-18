@@ -9,6 +9,7 @@ class Kvetchbox extends React.Component {
             user: '',
             kvetch: '',
             error: false,
+            postError: true,
         };
     }
 
@@ -27,15 +28,30 @@ class Kvetchbox extends React.Component {
         const { user, kvetch, error } = this.state;
         return (
             <KvetchContext.Consumer>
-                {( {addKvetch, kvetches, loading} ) => (
+                {( {addKvetch, kvetches, loading, postError} ) => (
                     <div className="kvetch kvetch-container">
-                        <textarea className="kvetch kvetch-entry"
+                        {!postError &&
+                        <textarea
+                            className="kvetch kvetch-entry"
                             type="text"
                             maxLength="350"
                             placeholder="What, I need to beg you to kvetch about something?"
                             onChange={event => this.handleKvetch(event)}
                             value={kvetch}
                         />
+                        }
+
+                        {postError &&
+                        <textarea
+                            className="kvetch kvetch-entry post-error"
+                            type="text"
+                            maxLength="350"
+                            placeholder="Error posting!"
+                            onChange={event => this.handleKvetch(event)}
+                            value={kvetch}
+                        />
+                        }
+
                         {error &&
                             <div className="kvetch error">
                                 Oy! You can't Kvetch for more than 140 chars!

@@ -24,7 +24,9 @@ class App extends React.Component {
       addKvetch: this.handleOnSubmit.bind(this),
       loadingPost: false,
       loadingGet: false,
+      postError: false,
     };
+    this.getAllTweets = this.getAllTweets.bind(this);
   }
 
   handleOnSubmit(kvetch) {
@@ -37,16 +39,20 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({ loadingGet: true, });
+    this.setState({ loadingGet: true });
     this.getAllTweets();
     this.updateUser();
-}
+  }
+
+  componentDidUpdate() {
+    setTimeout(this.getAllTweets, 2000);
+  }
 
   getAllTweets() {
-      getTweets().then(response => {
-        let latestTweets = response.data.tweets;
-        this.setState({ kvetches: latestTweets, loadingGet: false, });
-      });
+    getTweets().then(response => {
+      let latestTweets = response.data.tweets;
+      this.setState({ kvetches: latestTweets, loadingGet: false, });
+    });
   }
 
   sendKvetch(kvetch) {
@@ -59,13 +65,13 @@ class App extends React.Component {
       content: kvetch,
       date: timestamp,
     }
+
     if (user && kvetch) {
       sendTweet(tweetInfo).then(response => {
-        this.getAllTweets();
-        this.setState({ loadingPost: false });
+        this.setState({ loadingPost: false, postError: false });
       })
       .catch(response => {
-        alert("Posting error!");
+        this.setState({ postError: true });
       });
     }
   }

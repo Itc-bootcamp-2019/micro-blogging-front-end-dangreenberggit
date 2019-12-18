@@ -6,6 +6,7 @@ const KvetchContext = React.createContext({
     addKvetch: (kvetch) => { },
     loadingPost: false,
     loadingGet: false,
+    postError: false,
 });
 
 export default KvetchContext;
