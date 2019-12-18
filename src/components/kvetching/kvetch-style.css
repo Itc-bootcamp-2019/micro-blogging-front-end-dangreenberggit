@@ -8,12 +8,12 @@
 
 
 .kvetch-container {
-    position: absolute;
+    position: relative;
     box-sizing: border-box;
     width: 600px;
     height: 180px;
-    top: 5px;
     padding: 10px;
+    justify-content: center;
 }
 
 .kvetch-entry {
@@ -55,8 +55,7 @@
 }
 
 .display-container {
-    position: absolute; 
-    top: 200px;
+    position: relative; 
     text-align: left;
 }
 

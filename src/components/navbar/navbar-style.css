@@ -1,0 +1,28 @@
+.navbar {
+    display: flex;
+    height: 80px;
+    background-color: rgb(65, 65, 65);
+    margin-top: -20px;
+    width: 70vw;
+    font-size: 18px;
+}
+
+ul {
+    display: flex;
+    margin-inline-end: 20px;
+}
+
+li {
+    padding: 20px;
+    list-style: none;
+    color: darkgray;
+    transition: color 0.4s ease;
+}
+
+li:active {
+    color: white;
+}
+
+li:hover {
+    color: white;
+}

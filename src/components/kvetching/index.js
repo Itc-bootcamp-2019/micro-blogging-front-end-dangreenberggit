@@ -1,5 +1,5 @@
 import React from 'react';
-import KvetchContext from "../contexts/kvetch-context";
+import KvetchContext from "../../contexts/kvetch-context";
 import './kvetch-style.css';
 
 class Kvetchbox extends React.Component {
@@ -27,7 +27,7 @@ class Kvetchbox extends React.Component {
         const { user, kvetch, error } = this.state;
         return (
             <KvetchContext.Consumer>
-                {( {addKvetch, kvetches} ) => (
+                {( {addKvetch, kvetches, loading} ) => (
                     <div className="kvetch kvetch-container">
                         <textarea className="kvetch kvetch-entry"
                             type="text"
@@ -43,7 +43,7 @@ class Kvetchbox extends React.Component {
                         }
                         <button
                             className="kvetch submit-button"
-                            disabled={this.state.error}
+                            disabled={this.state.error || loading}
                             onClick={() => {addKvetch(kvetch); this.setState( { kvetch: ''})}}
                         >
                             Kvetch!

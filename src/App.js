@@ -1,19 +1,27 @@
 import React from 'react';
 import './App.css';
 import { sendTweet, getTweets } from "./lib/api";
-import KvetchBox from './components/kvetchbox';
+import KvetchBox from './components/kvetching/index';
 import KvetchContext from "./contexts/kvetch-context";
-import KvetchDisplay from './components/kvetchdisplay';
+import KvetchDisplay from './components/kvetching/kvetchdisplay';
+import Navbar from './components/navbar/navbar';
+import Loader from './components/loader';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
 
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: "Master Yoda",
+      user: "DMX",
       kvetches: [],
       addKvetch: this.handleOnSubmit.bind(this),
-      loading: false,
+      loadingPost: false,
+      loadingGet: false,
     };
   }
 
@@ -22,22 +30,22 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    this.setState({ loadingGet: true, });
     this.getAllTweets();
-    this.setState({loading: true});
 }
 
   getAllTweets() {
       getTweets().then(response => {
         let latestTweets = response.data.tweets;
-        while (latestTweets.length > 5  ) {
+        while (latestTweets.length > 5) {
           latestTweets.pop();
         }
-        this.setState({ kvetches: latestTweets, loading: false, });
+        this.setState({ kvetches: latestTweets, loadingGet: false, });
       });
   }
 
-  async sendKvetch(kvetch) {
-    this.setState({ loading: true });
+  sendKvetch(kvetch) {
+    this.setState({ loadingPost: true });
     const { user } = this.state;
     let date = new Date();
     let timestamp = date.toISOString();
@@ -47,24 +55,39 @@ class App extends React.Component {
       date: timestamp,
     }
     if (user && kvetch) {
-      const response = await sendTweet(tweetInfo);
-      if (response.success) {
+      sendTweet(tweetInfo).then(response => {
         this.getAllTweets();
-      }
+        this.setState({ loadingPost: false });
+      })
+      .catch(response => {
+        alert("Posting error!");
+      });
     }
   }
 
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <KvetchContext.Provider value={this.state}>
-            <KvetchBox
-            />
-            <KvetchDisplay
-            />
-          </KvetchContext.Provider>
-        </header>
+        <div className="App-header">
+          <Router>
+            <Navbar />
+
+            <div className="App-content">
+              <Switch>
+                <Route path="/profile">
+                  Profile page
+                </Route>
+                <Route exact path="/">
+                    <KvetchContext.Provider value={this.state}>
+                      <KvetchBox/>
+                        {this.state.loadingGet && <Loader />}
+                        {!this.state.loadingGet && <KvetchDisplay />}
+                    </KvetchContext.Provider>
+                </Route>
+              </Switch>
+              </div>
+          </Router>
+        </div>
       </div>
     );
   }

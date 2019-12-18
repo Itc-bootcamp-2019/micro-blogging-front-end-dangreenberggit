@@ -1,5 +1,5 @@
 import React from 'react';
-import KvetchContext from "../contexts/kvetch-context";
+import KvetchContext from "../../contexts/kvetch-context";
 import './kvetch-style.css';
 
 class KvetchDisplay extends React.Component {
@@ -10,7 +10,6 @@ class KvetchDisplay extends React.Component {
             kvetch: '',
             kvetches: [],
             error: false,
-            loading: false,
         };
     }
 
