@@ -4,8 +4,10 @@ import { sendTweet, getTweets } from "./lib/api";
 import KvetchBox from './components/kvetching/index';
 import KvetchContext from "./contexts/kvetch-context";
 import KvetchDisplay from './components/kvetching/kvetchdisplay';
+import Profile from './components/profile';
 import Navbar from './components/navbar/navbar';
 import Loader from './components/loader';
+import ls from 'local-storage';
 import {
   BrowserRouter as Router,
   Switch,
@@ -17,7 +19,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: "DMX",
+      user: "guest",
       kvetches: [],
       addKvetch: this.handleOnSubmit.bind(this),
       loadingPost: false,
@@ -29,24 +31,27 @@ class App extends React.Component {
     this.sendKvetch(kvetch);
   }
 
+  updateUser() {
+    const username = ls.get('username') || '';
+    this.setState({ user: username });
+  }
+
   componentDidMount() {
     this.setState({ loadingGet: true, });
     this.getAllTweets();
+    this.updateUser();
 }
 
   getAllTweets() {
       getTweets().then(response => {
         let latestTweets = response.data.tweets;
-        while (latestTweets.length > 5) {
-          latestTweets.pop();
-        }
         this.setState({ kvetches: latestTweets, loadingGet: false, });
       });
   }
 
   sendKvetch(kvetch) {
     this.setState({ loadingPost: true });
-    const { user } = this.state;
+    const user = ls.get('username') || '';
     let date = new Date();
     let timestamp = date.toISOString();
     const tweetInfo = {
@@ -75,7 +80,7 @@ class App extends React.Component {
             <div className="App-content">
               <Switch>
                 <Route path="/profile">
-                  Profile page
+                  <Profile />
                 </Route>
                 <Route exact path="/">
                     <KvetchContext.Provider value={this.state}>
