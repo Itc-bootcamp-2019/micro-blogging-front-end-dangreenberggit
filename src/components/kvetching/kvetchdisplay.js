@@ -19,7 +19,7 @@ class KvetchDisplay extends React.Component {
             {({ user, addKvetch, kvetches }) => (
                 <div className="kvetch display-container">
                 {kvetches.map(kvetch => (
-                    <div className="kvetch display-item" key={kvetch.date}>
+                    <div className="kvetch display-item" key={kvetch.id}>
                         <div className="kvetch-info-container">
                             <div className="kvetch-info user">
                                 {kvetch.userName}

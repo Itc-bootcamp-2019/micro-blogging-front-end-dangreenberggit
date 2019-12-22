@@ -1,13 +1,11 @@
 import React from 'react';
 import './App.css';
-import { sendTweet, getTweets } from "./lib/api";
 import KvetchBox from './components/kvetching/index';
 import KvetchContext from "./contexts/kvetch-context";
 import KvetchDisplay from './components/kvetching/kvetchdisplay';
 import Profile from './components/profile';
 import Navbar from './components/navbar/navbar';
 import Loader from './components/loader';
-import ls from 'local-storage';
 import {
   BrowserRouter as Router,
   Switch,
@@ -49,15 +47,32 @@ class App extends React.Component {
   }
 
   getAllTweets() {
-    getTweets().then(response => {
+    let tweetStorage = [];
+    db.collection('Messages').get() 
+    .then((snapshot) => {
+      snapshot.forEach((doc) => {
+        tweetStorage.push(doc);
+        console.log(doc.id, '=>', doc.data());
+      });
+    })
+    .catch((err) => {
+      console.log('Error getting documents', err);
+    });
+    let tweetArray = tweetStorage.reverse();
+    while (tweetArray.length > 10) {
+      tweetArray.pop();
+    }
+    this.setState({ kvetches: tweetArray });
+  }
+
+/*     getTweets().then(response => {
       let latestTweets = response.data.tweets;
       this.setState({ kvetches: latestTweets, loadingGet: false, });
-    });
+    }); */
   }
 
   sendKvetch(kvetch) {
     this.setState({ loadingPost: true });
-    const user = ls.get('username') || '';
     let date = new Date();
     let timestamp = date.toISOString();
     const tweetInfo = {
@@ -66,13 +81,18 @@ class App extends React.Component {
       date: timestamp,
     }
 
-    if (user && kvetch) {
+    let addDoc = db.collection('Messages').add({
+      tweet: tweetInfo
+    }).then(ref => {
+      console.log('Added document with ID: ', ref.id);
+    });
+  /*   if (user && kvetch) {
       sendTweet(tweetInfo).then(response => {
         this.setState({ loadingPost: false, postError: false });
       })
       .catch(response => {
         this.setState({ postError: true });
-      });
+      }); */
     }
   }
 
