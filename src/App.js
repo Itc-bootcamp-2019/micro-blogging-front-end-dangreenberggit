@@ -56,14 +56,12 @@ class App extends React.Component {
       const tweetStorage = [];
       snapshot.forEach((doc) => {
         const tweet  = doc.data();
-  //      .update({}) assign id right after tweet creation
         const newTweet = { 
           userName: tweet.userName,
           date: tweet.date,
           content: tweet.content,
- //         id: doc.id,
+          id: tweet.id,
         }
-        console.log(tweet);
         tweetStorage.push(newTweet);
       });
       const tweetArray = tweetStorage.reverse();
@@ -78,7 +76,6 @@ class App extends React.Component {
   }
 
   sendKvetch(kvetch) {
-    const db = firebase.firestore();
     this.setState({ loadingPost: true });
     let date = new Date();
     let { user } = this.state;
@@ -88,12 +85,16 @@ class App extends React.Component {
       content: kvetch,
       date: timestamp,
     }
-
+    const { kvetches } = this.state;
+    kvetches.push(tweetInfo);
+    this.setState({ kvetches: kvetches });
+    const db = firebase.firestore();
     db.collection('Messages').add({
       ...tweetInfo
-    }).then(ref => {
-      console.log('Added document with ID: ', ref.id);
-      this.getAllTweets();
+    }).then(function(docRef) {
+      db.collection('Messages').doc(docRef.id).update({
+        id: docRef.id
+      })
     });
   }
   /*   if (user && kvetch) {
