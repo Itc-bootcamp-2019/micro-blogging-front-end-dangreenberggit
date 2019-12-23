@@ -26,31 +26,20 @@ class Kvetchbox extends React.Component {
 
     render() {
         const { user, kvetch, error } = this.state;
+        const errorClasses = "kvetch kvetch-entry post-error";
+        const noErrorClasses = "kvetch kvetch-entry";
         return (
             <KvetchContext.Consumer>
                 {( {addKvetch, kvetches, loading, postError} ) => (
                     <div className="kvetch kvetch-container">
-                        {!postError &&
                         <textarea
-                            className="kvetch kvetch-entry"
+                            className={postError ? errorClasses : noErrorClasses}
                             type="text"
                             maxLength="350"
                             placeholder="What, I need to beg you to kvetch about something?"
                             onChange={event => this.handleKvetch(event)}
                             value={kvetch}
                         />
-                        }
-
-                        {postError &&
-                        <textarea
-                            className="kvetch kvetch-entry post-error"
-                            type="text"
-                            maxLength="350"
-                            placeholder="Error posting!"
-                            onChange={event => this.handleKvetch(event)}
-                            value={kvetch}
-                        />
-                        }
 
                         {error &&
                             <div className="kvetch error">

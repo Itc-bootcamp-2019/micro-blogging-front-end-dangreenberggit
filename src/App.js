@@ -6,6 +6,9 @@ import KvetchDisplay from './components/kvetching/kvetchdisplay';
 import Profile from './components/profile';
 import Navbar from './components/navbar/navbar';
 import Loader from './components/loader';
+import ls from 'local-storage';
+import firebase from './config/fbconfig';
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -43,37 +46,42 @@ class App extends React.Component {
   }
 
   componentDidUpdate() {
-    setTimeout(this.getAllTweets, 2000);
+    //setTimeout(this.getAllTweets, 2000);
   }
 
   getAllTweets() {
-    let tweetStorage = [];
+    const db = firebase.firestore();
     db.collection('Messages').get() 
     .then((snapshot) => {
+      const tweetStorage = [];
       snapshot.forEach((doc) => {
-        tweetStorage.push(doc);
-        console.log(doc.id, '=>', doc.data());
+        const tweet  = doc.data();
+  //      .update({}) assign id right after tweet creation
+        const newTweet = { 
+          userName: tweet.userName,
+          date: tweet.date,
+          content: tweet.content,
+ //         id: doc.id,
+        }
+        console.log(tweet);
+        tweetStorage.push(newTweet);
       });
+      const tweetArray = tweetStorage.reverse();
+      while (tweetArray.length > 10) {
+        tweetArray.pop();
+      };
+      this.setState({ kvetches: tweetArray, loadingGet: false });
     })
     .catch((err) => {
-      console.log('Error getting documents', err);
+      console.log('Error loading tweet', err);
     });
-    let tweetArray = tweetStorage.reverse();
-    while (tweetArray.length > 10) {
-      tweetArray.pop();
-    }
-    this.setState({ kvetches: tweetArray });
-  }
-
-/*     getTweets().then(response => {
-      let latestTweets = response.data.tweets;
-      this.setState({ kvetches: latestTweets, loadingGet: false, });
-    }); */
   }
 
   sendKvetch(kvetch) {
+    const db = firebase.firestore();
     this.setState({ loadingPost: true });
     let date = new Date();
+    let { user } = this.state;
     let timestamp = date.toISOString();
     const tweetInfo = {
       userName: user,
@@ -81,20 +89,23 @@ class App extends React.Component {
       date: timestamp,
     }
 
-    let addDoc = db.collection('Messages').add({
-      tweet: tweetInfo
+    db.collection('Messages').add({
+      ...tweetInfo
     }).then(ref => {
       console.log('Added document with ID: ', ref.id);
+      this.getAllTweets();
     });
+  }
   /*   if (user && kvetch) {
       sendTweet(tweetInfo).then(response => {
         this.setState({ loadingPost: false, postError: false });
       })
       .catch(response => {
         this.setState({ postError: true });
-      }); */
-    }
-  }
+      }); 
+      }
+      */
+
 
   render() {
     return (
