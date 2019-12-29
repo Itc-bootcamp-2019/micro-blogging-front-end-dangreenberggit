@@ -16,13 +16,17 @@ class KvetchDisplay extends React.Component {
     render() {
         return(      
             <KvetchContext.Consumer>
-            {({ user, addKvetch, kvetches }) => (
+            {({ addKvetch, kvetches }) => (
                 <div className="kvetch display-container">
                 {kvetches.map(kvetch => (
-                    <div className="kvetch display-item" key={kvetch.id}>
+                    <div className="kvetch display-item" key={kvetch.messageId}>
                         <div className="kvetch-info-container">
+                            <img
+                                className="kvetch-info avatar"
+                                src={"url(" + kvetch.avatar + ")"}
+                            />
                             <div className="kvetch-info user">
-                                {kvetch.userName}
+                                {kvetch.name}
                             </div>
                             <div className="kvetch-info date">
                                 {kvetch.date}

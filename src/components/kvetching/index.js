@@ -2,7 +2,7 @@ import React from 'react';
 import KvetchContext from "../../contexts/kvetch-context";
 import './kvetch-style.css';
 
-class Kvetchbox extends React.Component {
+class KvetchBox extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -60,4 +60,4 @@ class Kvetchbox extends React.Component {
     }
 }
 
-export default Kvetchbox;
+export default KvetchBox;

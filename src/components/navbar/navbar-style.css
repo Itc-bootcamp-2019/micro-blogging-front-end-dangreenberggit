@@ -1,12 +1,13 @@
 .navbar {
     display: flex;
-    height: 80px;
+    height: 10vh;
     background-color: rgb(65, 65, 65);
     margin-top: -20px;
     width: 70vw;
     font-size: 18px;
-    position: fixed;
+    position: absolute;
     z-index: 2;
+    padding: 10px;
 }
 
 ul {
@@ -27,4 +28,29 @@ li:active {
 
 li:hover {
     color: white;
+}
+
+.nav-left {
+    display: flex;
+    position: absolute;
+}
+
+.nav-right {
+    position: absolute;
+    top: 0;
+    right: 10vw;
+    width: 25vw;
+    display: flex;
+}
+
+.google-login {
+    left: 10vw;
+    top: 0;
+    position: relative;
+    width: 15vw;
+}
+
+.user-profile {
+    position: absolute;
+    width: 15vw;
 }

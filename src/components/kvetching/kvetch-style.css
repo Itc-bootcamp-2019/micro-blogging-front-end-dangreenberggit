@@ -14,7 +14,9 @@
     height: 180px;
     padding: 10px;
     justify-content: center;
-    top: 80px;
+    transform: translate(-50%, -50%);
+    top: 25vh;
+    left: 50vw;
     z-index: 1;
 }
 

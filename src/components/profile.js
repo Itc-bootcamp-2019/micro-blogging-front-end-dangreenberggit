@@ -1,6 +1,6 @@
 import React from 'react';
 import KvetchContext from "../contexts/kvetch-context";
-import ls from 'local-storage';
+import firebase from '../config/fbconfig';
 
 class Profile extends React.Component {
     constructor(props) {
@@ -9,14 +9,16 @@ class Profile extends React.Component {
             userentry: '',
             kvetch: '',
             error: false,
-            user: ''
+            userName: ''
         };
     }
 
     componentDidMount() {
-        let username = ls.get('username') || '';
-        console.log(username);
-        this.setState({ user: username });
+        const user = firebase.auth().currentUser;
+        const profileInfo = user.getBasicProfile();
+        let userName = profileInfo.getName();
+        let userAvatar = profileInfo.getImageURL();
+        this.setState({ user: userName });
     }
 
 
@@ -26,9 +28,13 @@ class Profile extends React.Component {
     }
 
     handleSubmit() {
-        const {userentry} = this.state;
-        ls.set ('username', userentry);
-        this.setState({ user: userentry, userentry: ''});  
+        const { userentry } = this.state;
+        const user = firebase.auth().currentUser;
+        user.updateProfile({
+            displayName: userentry,
+        }).then((userentry) => {
+            this.setState({ user: userentry, userentry: ''});
+        })
     }
 
     render() {
@@ -37,13 +43,13 @@ class Profile extends React.Component {
             <KvetchContext.Consumer>
                 {( {addKvetch, kvetches, loading, user} ) => (
                     <div className="profile">
-                        <h1>{this.state.user}</h1>
-                        User Name
+                        <h1>{this.state.userName}</h1>
+                        User Handle
                         <input 
                             className="profile-entry"
                             type="text"
                             maxLength="30"
-                            placeholder="Enter user name"
+                            placeholder="Enter new user handle"
                             onChange={event => this.handleChange(event)}
                             value={userentry}
                         />
@@ -52,7 +58,7 @@ class Profile extends React.Component {
                             disabled={this.state.error || loading}
                             onClick={() => this.handleSubmit()}
                         >
-                            Log In
+                           Change User Handle
                         </button>
                     </div>
                 )}
